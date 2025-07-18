@@ -324,7 +324,7 @@ class Run {
     static Connection DbConnect() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sbibank", "root", "Kumar9090@");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sbibank", "root", "");
             return con;
         } catch (Exception e) {
             System.err.println("Oops! there are errors. Error: " + e);
