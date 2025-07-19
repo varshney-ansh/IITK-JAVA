@@ -3,6 +3,32 @@ import java.sql.*;
 import java.io.*;
 
 class Account {
+   public static boolean checkAdminUsername(Connection con, String username) {
+        String query = "SELECT * FROM admins WHERE ad_username = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            return rs.next(); // Returns true if username exists
+        } catch (SQLException e) {
+            System.out.println("Error: " + e);
+            return false;
+        }
+    }
+
+   public static boolean checkusername(Connection con, String username) {
+        String query = "SELECT * FROM students WHERE stu_username = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            return rs.next(); // Returns true if username exists
+        } catch (SQLException e) {
+            System.out.println("Error: " + e);
+            return false;
+        }
+    }
+
     public static void ViewProfile(Connection con, String username) {
         System.out.println("+-------------------------+");
         String query = "SELECT * FROM students WHERE stu_username = ?";
@@ -38,7 +64,7 @@ class Account {
             while (rs.next()) {
                 System.out.println("ID: " + rs.getInt("id"));
                 System.out.println("Name: " + rs.getString("stu_name"));
-                System.out.println("Email: " + rs.getString("stu_username"));
+                System.out.println("Username: " + rs.getString("stu_username"));
                 System.out.println("Class: " + rs.getString("stu_class"));
                 System.out.println("Year: " + rs.getString("stu_year"));
                 System.out.println("Mobile: " + rs.getString("stu_mobile"));
@@ -288,12 +314,27 @@ class Run {
         System.out.println("Student Username: ");
 
         String stu_user = sc.next();
+        if (Account.checkusername(con, stu_user)) {
+            System.out.println("Error: Username already exists. Please choose a different username.");
+            System.out.println("Student Username: ");
+            stu_user = sc.next();
+        }
         System.out.println("Student Password: ");
         String stu_pass = sc.next();
         System.out.println("Student Class (CSE/ELEX):  ");
         String stu_class = sc.next();
+        if (!stu_class.equalsIgnoreCase("CSE") && !stu_class.equalsIgnoreCase("ELEX")) {
+            System.out.println("Error: Invalid Class. Please enter CSE or ELEX.");
+            System.out.println("Student Class (CSE/ELEX): ");
+            stu_class = sc.next();
+        }
         System.out.println("Student Year (1/2/3/4): ");
         int stu_year = sc.nextInt();
+        if (stu_year < 1 || stu_year > 4) {
+            System.out.println("Error: Invalid Year. Please enter a valid year (1-4).");
+            System.out.println("Student Year (1/2/3/4): ");
+            stu_year = sc.nextInt();
+        }
         System.out.println("Student Phone Number: ");
         Long stu_mobile = sc.nextLong();
         System.out.println("Student Address");
@@ -337,10 +378,20 @@ class Run {
                 System.out.println("Admin Username: ");
 
                 String ad_user = sc.next();
+                if (Account.checkAdminUsername(con, ad_user)) {
+                    System.out.println("Error: Username already exists. Please choose a different username.");
+                    System.out.println("Admin Username: ");
+                    ad_user = sc.next();
+                }
                 System.out.println("Admin Password: ");
                 String ad_pass = sc.next();
                 System.out.println("Admin Type (Prof/HOD/Director): ");
                 String ad_type = sc.next();
+                if(!ad_type.equalsIgnoreCase("Prof") && !ad_type.equalsIgnoreCase("HOD") && !ad_type.equalsIgnoreCase("Director")) {
+                    System.out.println("Error: Invalid Admin Type. Please enter Prof, HOD, or Director.");
+                    System.out.println("Admin Type (Prof/HOD/Director): ");
+                    ad_type = sc.next();
+                }
                 System.out.println("Admin Phone Number: ");
                 Long ad_mobile = sc.nextLong();
                 try {
